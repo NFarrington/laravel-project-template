@@ -1,4 +1,4 @@
-## Laravel Project Template
+# Laravel Project Template
 
 A base [Laravel](https://laravel.com/) installation with additional configuration and packages.
 
