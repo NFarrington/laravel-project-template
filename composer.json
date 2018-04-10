@@ -61,12 +61,36 @@
             "php artisan ide-helper:generate",
             "php artisan ide-helper:meta",
             "php artisan ide-helper:models --reset --write"
-        ]
+        ],
+        "deploy-prod": [
+            "npm install",
+            "php artisan down --retry=120",
+            "composer install --no-dev --optimize-autoloader --classmap-authoritative",
+            "php artisan config:cache",
+            "php artisan route:cache",
+            "php artisan cache:clear",
+            "php artisan migrate --step --force --no-interaction",
+            "npm run production",
+            "@log-rotate",
+            "php artisan up"
+        ],
+        "deploy-dev": [
+            "npm install",
+            "php artisan down",
+            "composer install",
+            "php artisan config:clear",
+            "php artisan route:clear",
+            "php artisan cache:clear",
+            "php artisan migrate --step --force --no-interaction",
+            "npm run development",
+            "@log-rotate",
+            "php artisan up"
+        ],
+        "log-rotate": "if [ -f storage/logs/laravel.log ]; then mv storage/logs/laravel.log storage/logs/laravel.log.`date +%s`; fi"
     },
     "config": {
         "preferred-install": "dist",
-        "sort-packages": true,
-        "optimize-autoloader": true
+        "sort-packages": true
     },
     "minimum-stability": "dev",
     "prefer-stable": true
