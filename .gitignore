@@ -4,8 +4,10 @@
 /storage/*.key
 /vendor
 /.idea
+/.phpstorm.meta.php
 /.vscode
 /.vagrant
+/_ide_helper.php
 Homestead.json
 Homestead.yaml
 npm-debug.log
