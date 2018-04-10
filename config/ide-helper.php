@@ -51,6 +51,7 @@ return array(
 
     'helper_files' => array(
         base_path().'/app/helpers.php',
+        base_path().'/tests/helpers.php',
         base_path().'/vendor/laravel/framework/src/Illuminate/Support/helpers.php',
     ),
 
