@@ -10,7 +10,7 @@ addons:
 install:
   - composer self-update --no-interaction
   - nvm install && nvm use
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter && chmod +x ./cc-test-reporter
+#  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter && chmod +x ./cc-test-reporter
 
 before_script:
   - cp .env.travis .env
@@ -18,16 +18,17 @@ before_script:
   - composer install-prod
   - php artisan key:generate --no-interaction
   - composer deploy-prod
-  - ./cc-test-reporter before-build
+#  - ./cc-test-reporter before-build
 
 script:
-  - vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+  - vendor/bin/phpunit
+#  - vendor/bin/phpunit --coverage-clover build/logs/clover.xml
 
 after_failure:
   - cat storage/logs/laravel.log
 
 after_script:
-  - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./cc-test-reporter after-build --coverage-input-type clover --exit-code $TRAVIS_TEST_RESULT; fi
+#  - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./cc-test-reporter after-build --coverage-input-type clover --exit-code $TRAVIS_TEST_RESULT; fi
 
 cache:
   directories:
