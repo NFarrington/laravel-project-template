@@ -15,9 +15,9 @@ install:
 before_script:
   - cp .env.travis .env
   - mysql -e 'CREATE DATABASE `laravel`;'
-  - composer install-prod
+  - composer install
   - php artisan key:generate --no-interaction
-  - composer deploy-prod
+  - composer deploy-dev
 #  - ./cc-test-reporter before-build
 
 script:
