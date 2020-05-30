@@ -1,34 +1,39 @@
 language: php
 
 php:
-  - 7.1
-  - 7.2
+  - '7.4'
+  - nightly
+
+matrix:
+  allow_failures:
+    - php: nightly
 
 addons:
-  mariadb: '10.2'
+  mariadb: '10.3'
 
 install:
   - composer self-update --no-interaction
   - nvm install && nvm use
-#  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter && chmod +x ./cc-test-reporter
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter && chmod +x ./cc-test-reporter
 
 before_script:
   - cp .env.travis .env
-  - mysql -e 'CREATE DATABASE `laravel`;'
+  - mysql -e 'CREATE DATABASE laravel;'
+  - mysql -e 'CREATE USER IF NOT EXISTS travis@localhost;'
+  - mysql -e 'GRANT ALL ON laravel.* to travis@localhost;'
   - composer install
   - php artisan key:generate --no-interaction
   - composer deploy-dev
-#  - ./cc-test-reporter before-build
+  - ./cc-test-reporter before-build
 
 script:
-  - vendor/bin/phpunit
-#  - vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+  - vendor/bin/phpunit --configuration phpunit.travis.xml --coverage-clover build/logs/clover.xml
 
 after_failure:
   - cat storage/logs/laravel.log
 
 after_script:
-#  - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./cc-test-reporter after-build --coverage-input-type clover --exit-code $TRAVIS_TEST_RESULT; fi
+  - ./cc-test-reporter after-build --coverage-input-type clover --exit-code $TRAVIS_TEST_RESULT
 
 cache:
   directories:
