@@ -9,11 +9,12 @@
     ],
     "license": "MIT",
     "require": {
-        "doctrine/dbal": "^2.9",
         "php": "^7.2",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "^6.2",
-        "laravel/tinker": "^2.0"
+        "laravel/tinker": "^2.0",
+        "bugsnag/bugsnag-laravel": "^2.0",
+        "doctrine/dbal": "^2.9"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.2",
@@ -50,7 +51,8 @@
             "Tests\\": "tests/"
         },
         "files": [
-            "tests/helpers.php"
+            "tests/helpers.php",
+            "vendor/phpunit/phpunit/src/Framework/Assert/Functions.php"
         ]
     },
     "minimum-stability": "dev",
@@ -66,36 +68,44 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ],
-        "ide-helper": [
-            "php artisan ide-helper:generate",
-            "php artisan ide-helper:meta",
-            "php artisan ide-helper:models --reset --write"
-        ],
-        "deploy-prod": [
-            "npm install",
-            "php artisan down --retry=120",
-            "@install-prod",
-            "php artisan config:cache",
-            "php artisan route:cache",
-            "php artisan cache:clear",
-            "php artisan migrate --step --force --no-interaction",
-            "npm run production",
-            "@log-rotate",
-            "php artisan up"
-        ],
-        "install-prod": "composer install --no-dev --optimize-autoloader --classmap-authoritative",
         "deploy-dev": [
             "npm install",
-            "php artisan down",
-            "composer install",
-            "php artisan config:clear",
-            "php artisan route:clear",
-            "php artisan cache:clear",
-            "php artisan migrate --step --force --no-interaction",
+            "@update-version",
+            "@php artisan down",
+            "@composer install",
+            "@php artisan config:clear",
+            "@php artisan route:clear",
+            "@php artisan cache:clear",
+            "@php artisan migrate --step --force --no-interaction",
             "npm run development",
             "@log-rotate",
-            "php artisan up"
+            "@php artisan up"
         ],
-        "log-rotate": "if [ -f storage/logs/laravel.log ]; then mv storage/logs/laravel.log storage/logs/laravel.log.`date +%s`; fi"
+        "docker-install": [
+            "@composer install --no-dev --optimize-autoloader --classmap-authoritative --no-suggest --no-autoloader --no-scripts"
+        ],
+        "docker-build": [
+            "@install-prod"
+        ],
+        "docker-entrypoint": [
+            "@php artisan config:cache",
+            "@php artisan route:cache",
+            "@php artisan cache:clear",
+            "@php artisan migrate --step --force --no-interaction"
+        ],
+        "ide-helper": [
+            "@ide-helper-basic",
+            "@php artisan ide-helper:models --reset --write"
+        ],
+        "ide-helper-basic": [
+            "@php artisan ide-helper:generate",
+            "@php artisan ide-helper:meta"
+        ],
+        "install-prod": "@composer install --no-dev --optimize-autoloader --classmap-authoritative --no-suggest",
+        "log-rotate": "if [ -f storage/logs/laravel.log ]; then mv storage/logs/laravel.log storage/logs/laravel.log.`date +%s`; fi",
+        "update-version": [
+            "sed -i \"s/^APP_COMMIT=.*$/APP_COMMIT=$(git rev-parse --short HEAD)/\" .env",
+            "sed -i \"s/^APP_VERSION=.*$/APP_VERSION=$(git describe --abbrev=0 --tags)/\" .env"
+        ]
     }
 }

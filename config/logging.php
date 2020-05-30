@@ -1,8 +1,12 @@
 <?php
 
+use App\Logging\LogTypeCustomizer;
+use App\Logging\StacktraceCustomizer;
+use Monolog\Formatter\JsonFormatter;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
+use Monolog\Logger;
 
 return [
 
@@ -41,6 +45,11 @@ return [
             'ignore_exceptions' => false,
         ],
 
+        'docker-stack' => [
+            'driver' => 'stack',
+            'channels' => ['docker', 'bugsnag'],
+        ],
+
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
@@ -52,6 +61,17 @@ return [
             'path' => storage_path('logs/laravel.log'),
             'level' => 'debug',
             'days' => 14,
+        ],
+
+        'docker' => [
+            'driver' => 'monolog',
+            'handler' => StreamHandler::class,
+            'handler_with' => [
+                'stream' => 'php://stderr',
+                'level' => Logger::DEBUG,
+            ],
+            'formatter' => JsonFormatter::class,
+            'tap' => [LogTypeCustomizer::class, StacktraceCustomizer::class],
         ],
 
         'slack' => [
@@ -98,6 +118,10 @@ return [
 
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
+        ],
+
+        'bugsnag' => [
+            'driver' => 'bugsnag',
         ],
     ],
 

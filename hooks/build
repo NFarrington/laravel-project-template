@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e
+
+[[ -z "$DOCKERFILE_PATH" ]] && { >&2 echo 'ERROR: $DOCKERFILE_PATH is not set.'; exit 1; }
+[[ -z "$DOCKER_REPO" ]] && { >&2 echo 'ERROR: $DOCKER_REPO is not set.'; exit 1; }
+[[ -z "$DOCKER_TAG" ]] && { >&2 echo 'ERROR: $DOCKER_TAG is not set.'; exit 1; }
+[[ -z "$SOURCE_COMMIT" ]] && { >&2 echo 'ERROR: $SOURCE_COMMIT is not set.'; exit 1; }
+[[ -z "$TARGET" ]] && { >&2 echo 'ERROR: $TARGET is not set.'; exit 1; }
+
+TAGS=$(echo $DOCKER_TAG | tr ',' "\n")
+TAG_ARGS=()
+for tag in $TAGS; do
+	TAG_ARGS+=('-t' "$DOCKER_REPO:$tag")
+	APP_VERSION="$tag" # the last tag becomes the app version
+done
+
+docker build \
+	--build-arg "APP_COMMIT=$SOURCE_COMMIT" \
+	--build-arg "APP_VERSION=$APP_VERSION" \
+	--target "$TARGET" \
+	-f "$DOCKERFILE_PATH" "${TAG_ARGS[@]}" .

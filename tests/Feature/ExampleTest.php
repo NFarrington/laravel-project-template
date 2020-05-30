@@ -14,8 +14,10 @@ class ExampleTest extends TestCase
      */
     public function testBasicTest()
     {
+        $this->withExceptionHandling();
+
         $response = $this->get('/');
 
-        $response->assertStatus(200);
+        assertLessThanOrEqual(499, $response->status());
     }
 }
