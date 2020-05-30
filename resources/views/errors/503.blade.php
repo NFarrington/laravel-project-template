@@ -4,12 +4,16 @@
 
 @section('message')
     @if(!empty($exception->getMessage()))
-        {{ $exception->getMessage() }}<br><br>
+        {{ $exception->getMessage() }}
     @else
-        Down for maintenance. Be right back!<br><br>
+        Down for maintenance.
     @endif
 
-    @if(!empty($exception->retryAfter))
+    <br><br>
+
+    @if(!empty($exception->retryAfter) && $exception->willBeAvailableAt->isFuture())
         Please try again {{ $exception->wentDownAt->addSeconds($exception->retryAfter)->diffForHumans() }}.
+    @elseif(!empty($exception->retryAfter))
+        Please try again later.
     @endif
 @endsection
