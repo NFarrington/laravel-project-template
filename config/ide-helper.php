@@ -13,6 +13,7 @@ return array(
 
     'filename'  => '_ide_helper',
     'format'    => 'php',
+
     'meta_filename' => '.phpstorm.meta.php',
 
     /*
@@ -28,6 +29,18 @@ return array(
 
     /*
     |--------------------------------------------------------------------------
+    | Factory Builders
+    |--------------------------------------------------------------------------
+    |
+    | Set to true to generate factory generators for better factory()
+    | method auto-completion.
+    |
+    */
+
+    'include_factory_builders' => true,
+
+    /*
+    |--------------------------------------------------------------------------
     | Write Model Magic methods
     |--------------------------------------------------------------------------
     |
@@ -36,6 +49,21 @@ return array(
     */
 
     'write_model_magic_where' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Write Eloquent Model Mixins
+    |--------------------------------------------------------------------------
+    |
+    | This will add the necessary DocBlock mixins to the model class
+    | contained in the Laravel Framework. This helps the IDE with
+    | auto-completion.
+    |
+    | Please be aware that this setting changes a file within the /vendor directory.
+    |
+    */
+
+    'write_eloquent_model_mixins' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -66,9 +94,21 @@ return array(
     */
 
     'model_locations' => array(
-        'app/Models',
+        'app',
     ),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Models to ignore
+    |--------------------------------------------------------------------------
+    |
+    | Define which models should be ignored.
+    |
+    */
+
+    'ignored_models' => array(
+
+    ),
 
     /*
     |--------------------------------------------------------------------------
@@ -84,18 +124,7 @@ return array(
         'Session' => array('Illuminate\Session\Store'),
     ),
 
-    'magic' => array(
-        'Log' => array(
-            'debug'     => 'Monolog\Logger::addDebug',
-            'info'      => 'Monolog\Logger::addInfo',
-            'notice'    => 'Monolog\Logger::addNotice',
-            'warning'   => 'Monolog\Logger::addWarning',
-            'error'     => 'Monolog\Logger::addError',
-            'critical'  => 'Monolog\Logger::addCritical',
-            'alert'     => 'Monolog\Logger::addAlert',
-            'emergency' => 'Monolog\Logger::addEmergency',
-        )
-    ),
+    'magic' => array(),
 
     /*
     |--------------------------------------------------------------------------
@@ -154,13 +183,13 @@ return array(
      |
      | For example, normally you would see this:
      |
-     |  * @property \Carbon\Carbon $created_at
-     |  * @property \Carbon\Carbon $updated_at
+     |  * @property \Illuminate\Support\Carbon $created_at
+     |  * @property \Illuminate\Support\Carbon $updated_at
      |
      | With this enabled, the properties will be this:
      |
-     |  * @property \Carbon\Carbon $createdAt
-     |  * @property \Carbon\Carbon $updatedAt
+     |  * @property \Illuminate\Support\Carbon $createdAt
+     |  * @property \Illuminate\Support\Carbon $updatedAt
      |
      | Note, it is currently an all-or-nothing option.
      |
@@ -175,8 +204,20 @@ return array(
     | Cast the given "real type" to the given "type".
     |
     */
-   'type_overrides' => array(
+    'type_overrides' => array(
         'integer' => 'int',
         'boolean' => 'bool',
-   ),
+    ),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Include DocBlocks from classes
+    |--------------------------------------------------------------------------
+    |
+    | Include DocBlocks from classes to allow additional code inspection for
+    | magic methods and properties.
+    |
+    */
+    'include_class_docblocks' => true,
+
 );
