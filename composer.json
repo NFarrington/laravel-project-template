@@ -19,6 +19,7 @@
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.2",
         "barryvdh/laravel-ide-helper": "^2.5",
+        "brainmaestro/composer-git-hooks": "^2.8",
         "facade/ignition": "^1.4",
         "fzaninotto/faker": "^1.9.1",
         "mockery/mockery": "^1.0",
@@ -26,12 +27,20 @@
         "phpunit/phpunit": "^8.0"
     },
     "config": {
+        "platform": {
+            "php": "7.2.0"
+        },
         "preferred-install": "dist",
         "sort-packages": true
     },
     "extra": {
         "laravel": {
             "dont-discover": []
+        },
+        "hooks": {
+            "pre-commit": [
+                "composer ide-helper"
+            ]
         }
     },
     "autoload": {
@@ -63,10 +72,25 @@
             "@php artisan package:discover --ansi"
         ],
         "post-root-package-install": [
+            "@php -r \"unlink('.styleci.yml');\"",
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
+        ],
+        "post-install-cmd": [
+            "if [ \"${COMPOSER_DEV_MODE:-0}\" -eq 1 ]; then $COMPOSER_BINARY post-install-cmd-dev; else true; fi"
+        ],
+        "post-install-cmd-dev": [
+            "@composer ide-helper-basic",
+            "vendor/bin/cghooks update && sed -i \"s|^composer|$COMPOSER_BINARY|g\" .git/hooks/pre-commit"
+        ],
+        "post-update-cmd": [
+            "if [ \"${COMPOSER_DEV_MODE:-0}\" -eq 1 ]; then $COMPOSER_BINARY post-update-cmd-dev; else true; fi"
+        ],
+        "post-update-cmd-dev": [
+            "@composer ide-helper-basic",
+            "vendor/bin/cghooks update && sed -i \"s|^composer|$COMPOSER_BINARY|g\" .git/hooks/pre-commit"
         ],
         "deploy-dev": [
             "npm install",
